@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Enemy/Enemy.hpp"
+#include "Enemy/PlaneEnemy.hpp"
 #include "Enemy/SoldierEnemy.hpp"
 #include "Enemy/TankEnemy.hpp"
 #include "Engine/AudioHelper.hpp"
@@ -160,9 +161,9 @@ void PlayScene::Update(float deltaTime) {
             case 1:
                 EnemyGroup->AddNewObject(enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
                 break;
-            // TODO HACKATHON-3 (2/3): Add your new enemy here.
-            // case 2:
-            //     ...
+            case 2:
+                EnemyGroup->AddNewObject(enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
             case 3:
                 EnemyGroup->AddNewObject(enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
                 break;
