@@ -146,7 +146,7 @@ void PlayScene::Update(float deltaTime) {
                 delete UIGroup;
                 delete imgTarget;*/
                 // Win.
-                Engine::GameEngine::GetInstance().ChangeScene("win-scene");
+                Engine::GameEngine::GetInstance().ChangeScene("win");
             }
             continue;
         }
@@ -447,7 +447,7 @@ bool PlayScene::CheckSpaceValid(int x, int y) {
 }
 std::vector<std::vector<int>> PlayScene::CalculateBFSDistance() {
     // Reverse BFS to find path.
-    std::vector<std::vector<int>> map(MapHeight, std::vector<int>(std::vector<int>(MapWidth, -1)));
+    std::vector<std::vector<int>> map(MapHeight, std::vector<int>(MapWidth, -1));
     std::queue<Engine::Point> que;
     // Push end point.
     // BFS from end point.
@@ -458,9 +458,18 @@ std::vector<std::vector<int>> PlayScene::CalculateBFSDistance() {
     while (!que.empty()) {
         Engine::Point p = que.front();
         que.pop();
-        // TODO PROJECT-1 (1/1): Implement a BFS starting from the most right-bottom block in the map.
-        //               For each step you should assign the corresponding distance to the most right-bottom block.
-        //               mapState[y][x] is TILE_DIRT if it is empty.
+        // Check all four directions
+        for (const auto& dir : directions) {
+            Engine::Point next = p + dir;
+            // Check if the next point is valid
+            if (next.x >= 0 && next.x < MapWidth && next.y >= 0 && next.y < MapHeight) {
+                // If the point is empty (TILE_DIRT) and hasn't been visited yet
+                if (mapState[next.y][next.x] == TILE_DIRT && map[next.y][next.x] == -1) {
+                    map[next.y][next.x] = map[p.y][p.x] + 1;
+                    que.push(next);
+                }
+            }
+        }
     }
     return map;
 }
