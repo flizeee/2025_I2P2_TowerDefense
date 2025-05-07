@@ -41,7 +41,7 @@ const Engine::Point PlayScene::EndGridPoint = Engine::Point(MapWidth, MapHeight 
 const std::vector<int> PlayScene::code = {
     ALLEGRO_KEY_UP, ALLEGRO_KEY_UP, ALLEGRO_KEY_DOWN, ALLEGRO_KEY_DOWN,
     ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT,
-    ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEYMOD_SHIFT, ALLEGRO_KEY_ENTER
+    ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEY_MODIFIERS, ALLEGRO_KEY_ENTER
 };
 Engine::Point PlayScene::GetClientSize() {
     return Engine::Point(MapWidth * BlockSize, MapHeight * BlockSize);
@@ -257,12 +257,47 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
 }
 void PlayScene::OnKeyDown(int keyCode) {
     IScene::OnKeyDown(keyCode);
+    Engine::LOG(Engine::INFO) << "Key pressed: " << keyCode;
+
     if (keyCode == ALLEGRO_KEY_TAB) {
         DebugMode = !DebugMode;
     } else {
         keyStrokes.push_back(keyCode);
         if (keyStrokes.size() > code.size())
             keyStrokes.pop_front();
+        
+        // Debug print
+        std::string sequence = "Current sequence: ";
+        for (int k : keyStrokes) {
+            sequence += std::to_string(k) + " ";
+        }
+        Engine::LOG(Engine::INFO) << sequence;
+        
+        // Check if the entered sequence matches the cheat code
+        if (keyStrokes.size() == code.size()) {
+            bool match = true;
+            auto it1 = keyStrokes.begin();
+            auto it2 = code.begin();
+            while (it1 != keyStrokes.end() && it2 != code.end()) {
+                if (*it1 != *it2) {
+                    match = false;
+                    break;
+                }
+                ++it1;
+                ++it2;
+            }
+            if (match) {
+                Engine::LOG(Engine::INFO) << "Cheat code activated!";
+                // Spawn a plane enemy
+                Enemy* enemy = new PlaneEnemy(0, 0);
+                enemy->Position = Engine::Point(SpawnGridPoint.x * BlockSize, SpawnGridPoint.y * BlockSize);
+                EnemyGroup->AddNewObject(enemy);
+                // Give money
+                EarnMoney(10000);
+                // Clear the key sequence
+                keyStrokes.clear();
+            }
+        }
     }
     if (keyCode == ALLEGRO_KEY_Q) {
         // Hotkey for MachineGunTurret.
