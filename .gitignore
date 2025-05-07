@@ -13,3 +13,11 @@ build
 
 # Others
 log.txt
+2025_I2P2_TowerDefense
+/audios
+/CMakeFiles
+/images
+/fonts
+CMakeCache.txt
+cmake_install.cmake
+Makefile
