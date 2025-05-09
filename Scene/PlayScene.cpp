@@ -288,10 +288,10 @@ void PlayScene::OnKeyDown(int keyCode) {
             }
             if (match) {
                 Engine::LOG(Engine::INFO) << "Cheat code activated!";
-                // Spawn a plane enemy
-                Enemy* enemy = new PlaneEnemy(0, 0);
-                enemy->Position = Engine::Point(SpawnGridPoint.x * BlockSize, SpawnGridPoint.y * BlockSize);
-                EnemyGroup->AddNewObject(enemy);
+                // Spawn a plane object
+                Plane* plane = new Plane();
+                plane->Position = Engine::Point(SpawnGridPoint.x * BlockSize, SpawnGridPoint.y * BlockSize);
+                EffectGroup->AddNewObject(plane);
                 // Give money
                 EarnMoney(10000);
                 // Clear the key sequence
