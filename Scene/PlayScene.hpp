@@ -10,6 +10,7 @@
 #include "Engine/Point.hpp"
 
 class Turret;
+class ShovelButton;
 namespace Engine {
     class Group;
     class Image;
@@ -57,6 +58,8 @@ public:
     Engine::Image *imgTarget;
     Engine::Sprite *dangerIndicator;
     Turret *preview;
+    ShovelButton *shovelButton;
+    bool isShovelActive;
     std::vector<std::vector<TileType>> mapState;
     std::vector<std::vector<int>> mapDistance;
     std::list<std::pair<int, float>> enemyWaveData;

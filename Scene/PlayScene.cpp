@@ -24,6 +24,7 @@
 #include "UI/Animation/DirtyEffect.hpp"
 #include "UI/Animation/Plane.hpp"
 #include "UI/Component/Label.hpp"
+#include "Turret/ShovelButton.hpp"
 
 // TODO HACKATHON-4 (1/3): Trace how the game handles keyboard input.
 // TODO HACKATHON-4 (2/3): Find the cheat code sequence in this file.
@@ -54,6 +55,7 @@ void PlayScene::Initialize() {
     lives = 10;
     money = 150;
     SpeedMult = 1;
+    isShovelActive = false;
     // Add groups from bottom to top.
     AddNewObject(TileMapGroup = new Group());
     AddNewObject(GroundEffectGroup = new Group());
@@ -197,10 +199,13 @@ void PlayScene::Draw() const {
     }
 }
 void PlayScene::OnMouseDown(int button, int mx, int my) {
-    if ((button & 1) && !imgTarget->Visible && preview) {
-        // Cancel turret construct.
-        UIGroup->RemoveObject(preview->GetObjectIterator());
-        preview = nullptr;
+    if ((button & 1) && !imgTarget->Visible) {
+        if (preview) {
+            // Cancel turret construct.
+            UIGroup->RemoveObject(preview->GetObjectIterator());
+            preview = nullptr;
+        }
+        isShovelActive = false;
     }
     IScene::OnMouseDown(button, mx, my);
 }
@@ -208,7 +213,7 @@ void PlayScene::OnMouseMove(int mx, int my) {
     IScene::OnMouseMove(mx, my);
     const int x = mx / BlockSize;
     const int y = my / BlockSize;
-    if (!preview || x < 0 || x >= MapWidth || y < 0 || y >= MapHeight) {
+    if ((!preview && !isShovelActive) || x < 0 || x >= MapWidth || y < 0 || y >= MapHeight) {
         imgTarget->Visible = false;
         return;
     }
@@ -217,13 +222,37 @@ void PlayScene::OnMouseMove(int mx, int my) {
     imgTarget->Position.y = y * BlockSize;
 }
 void PlayScene::OnMouseUp(int button, int mx, int my) {
+    Engine::LOG(Engine::INFO) << "isShovelActive: " << isShovelActive;
+    Engine::LOG(Engine::INFO) << "preview: " << preview;
+    Engine::LOG(Engine::INFO) << "imgTarget Visible: " << imgTarget->Visible;
     IScene::OnMouseUp(button, mx, my);
     if (!imgTarget->Visible)
         return;
     const int x = mx / BlockSize;
     const int y = my / BlockSize;
     if (button & 1) {
-        if (mapState[y][x] != TILE_OCCUPIED) {
+        if (isShovelActive) {
+            if (mapState[y][x] == TILE_OCCUPIED) {
+                const auto& objects = TowerGroup->GetObjects();
+                for (auto it = objects.begin(); it != objects.end(); ++it) {
+                    Turret* turret = dynamic_cast<Turret*>(*it);
+                    if (turret && !turret->Preview && 
+                        turret->Position.x == x * BlockSize + BlockSize / 2 && 
+                        turret->Position.y == y * BlockSize + BlockSize / 2) {
+                        // Engine::LOG(Engine::INFO) << "Turret price: " << turret->GetPrice();
+                        EarnMoney(turret->GetPrice() / 2);
+                        TowerGroup->RemoveObject(turret->GetObjectIterator());
+                        mapState[y][x] = TILE_FLOOR;
+                        break;
+                    }
+                }
+                // preview->GetObjectIterator()->first = false;
+                // UIGroup->RemoveObject(preview->GetObjectIterator());
+                // preview = nullptr;
+                isShovelActive = false;
+            }
+        }
+        else if (mapState[y][x] != TILE_OCCUPIED) {
             if (!preview)
                 return;
             // Check if valid.
@@ -400,22 +429,34 @@ void PlayScene::ConstructUI() {
     dangerIndicator = new Engine::Sprite("play/benjamin.png", w - shift, h - shift);
     dangerIndicator->Tint.a = 0;
     UIGroup->AddNewObject(dangerIndicator);
+
+    // Add shovel button
+    shovelButton = new ShovelButton("play/shovel.png", "play/shovel.png", 1294, 200);
+    shovelButton->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 3));
+    UIGroup->AddNewControlObject(shovelButton);
 }
 
 void PlayScene::UIBtnClicked(int id) {
+    Engine::LOG(Engine::INFO) << "UIBtnClicked: " << id;
+    isShovelActive = false;
+
     if (preview)
         UIGroup->RemoveObject(preview->GetObjectIterator());
     if (id == 0 && money >= MachineGunTurret::Price)
         preview = new MachineGunTurret(0, 0);
     else if (id == 1 && money >= LaserTurret::Price)
         preview = new LaserTurret(0, 0);
-    if (!preview)
-        return;
-    preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
-    preview->Tint = al_map_rgba(255, 255, 255, 200);
-    preview->Enabled = false;
-    preview->Preview = true;
-    UIGroup->AddNewObject(preview);
+    else if (id == 3) {
+        // preview = new LaserTurret(0, 0);
+        isShovelActive = true;
+    }
+    if (preview) {
+        preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
+        preview->Tint = al_map_rgba(255, 255, 255, 200);
+        preview->Enabled = false;
+        preview->Preview = true;
+        UIGroup->AddNewObject(preview);
+    }
     OnMouseMove(Engine::GameEngine::GetInstance().GetMousePosition().x, Engine::GameEngine::GetInstance().GetMousePosition().y);
 }
 
