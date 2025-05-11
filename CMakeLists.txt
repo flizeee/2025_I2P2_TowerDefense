@@ -81,6 +81,8 @@ add_executable(2025_I2P2_TowerDefense
     Turret/TurretButton.hpp
     Turret/ShovelButton.cpp
     Turret/ShovelButton.hpp
+    Turret/NewTurret.cpp
+    Turret/NewTurret.hpp
 
     UI/Animation/DirtyEffect.cpp
     UI/Animation/DirtyEffect.hpp

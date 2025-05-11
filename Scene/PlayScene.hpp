@@ -8,6 +8,10 @@
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
+#include "Turret/LaserTurret.hpp"
+#include "Turret/MachineGunTurret.hpp"
+#include "Turret/NewTurret.hpp"
+#include "Turret/TurretButton.hpp"
 
 class Turret;
 class ShovelButton;
