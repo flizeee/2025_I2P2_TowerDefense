@@ -112,7 +112,7 @@ void ScoreboardScene::UpdateScoreLabels() {
             scoreLabels[labelIdx + 3]->Text = "";
         }
     }
-    pageLabel->Text = "Page " + std::to_string(currentPage + 1) + " of " + std::to_string(scores.size() / entriesPerPage);
+    pageLabel->Text = "Page " + std::to_string(currentPage + 1) + " of " + std::to_string((scores.size() / entriesPerPage) + 1);
 }
 
 void ScoreboardScene::LoadScores() {
