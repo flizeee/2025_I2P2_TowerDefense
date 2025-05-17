@@ -31,13 +31,14 @@ void Enemy::OnExplode() {
         getPlayScene()->GroundEffectGroup->AddNewObject(new DirtyEffect("play/dirty-" + std::to_string(distId(rng)) + ".png", dist(rng), Position.x, Position.y));
     }
 }
-Enemy::Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money) : Engine::Sprite(img, x, y), speed(speed), hp(hp), money(money) {
+Enemy::Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money) : Engine::Sprite(img, x, y), speed(speed), hp(hp), maxHp(hp), money(money), hasBeenDamaged(false) {
     CollisionRadius = radius;
     reachEndTime = 0;
     hpLabel = new Engine::Label(std::to_string((int)(hp)), "pirulen.ttf", 14, Position.x, Position.y, 255, 255, 255);
 }
 void Enemy::Hit(float damage) {
     hp -= damage;
+    hasBeenDamaged = true;  // Set damaged flag when hit
     if (hp <= 0) {
         OnExplode();
         // Remove all turret's reference to target.
@@ -119,6 +120,20 @@ void Enemy::Update(float deltaTime) {
 }
 void Enemy::Draw() const {
     Sprite::Draw();
+    if (hasBeenDamaged) {
+        // Draw health bar background (red)
+        const float barWidth = 40.0f;
+        const float barHeight = 4.0f;
+        const float barY = Position.y - 20.0f;  // Position above the enemy
+        const float barX = Position.x - barWidth / 2.0f;  // Center the bar
+        
+        // Draw background (red)
+        al_draw_filled_rectangle(barX, barY, barX + barWidth, barY + barHeight, al_map_rgba(255, 0, 0, 180));
+        
+        // Draw foreground (green) based on current HP percentage
+        float hpPercentage = hp / maxHp;
+        al_draw_filled_rectangle(barX, barY, barX + barWidth * hpPercentage, barY + barHeight, al_map_rgba(0, 255, 0, 180));
+    }
     hpLabel->Draw();
     if (PlayScene::DebugMode) {
         // Draw collision radius.

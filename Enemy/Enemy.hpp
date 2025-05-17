@@ -18,7 +18,9 @@ protected:
     std::vector<Engine::Point> path;
     float speed;
     float hp;
+    float maxHp;  // Store max HP to calculate health bar percentage
     int money;
+    bool hasBeenDamaged;  // Track if enemy has been damaged
     PlayScene *getPlayScene();
     virtual void OnExplode();
 
