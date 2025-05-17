@@ -28,6 +28,12 @@ void WinScene::Initialize() {
     
     // Add name input prompt
     AddNewObject(new Engine::Label("Enter your name:", "pirulen.ttf", 36, halfW, halfH / 2, 255, 255, 255, 255, 0.5, 0.5));
+    
+    // Add border for name input
+    const int borderWidth = 300;
+    const int borderHeight = 60;
+    AddNewObject(new Engine::Image("win/dirt.png", halfW, halfH / 2 + 50, borderWidth, borderHeight, 0.5, 0.5));
+    
     nameInputLabel = new Engine::Label(playerName + "_", "pirulen.ttf", 36, halfW, halfH / 2 + 50, 255, 255, 255, 255, 0.5, 0.5);
     AddNewObject(nameInputLabel);
 
