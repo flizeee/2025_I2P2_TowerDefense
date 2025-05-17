@@ -34,6 +34,7 @@ void Enemy::OnExplode() {
 Enemy::Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money) : Engine::Sprite(img, x, y), speed(speed), hp(hp), money(money) {
     CollisionRadius = radius;
     reachEndTime = 0;
+    hpLabel = new Engine::Label(std::to_string((int)(hp)), "pirulen.ttf", 14, Position.x, Position.y, 255, 255, 255);
 }
 void Enemy::Hit(float damage) {
     hp -= damage;
@@ -48,6 +49,7 @@ void Enemy::Hit(float damage) {
         getPlayScene()->EnemyGroup->RemoveObject(objectIterator);
         AudioHelper::PlayAudio("explosion.wav");
     }
+    hpLabel->Text = std::to_string((int)(hp));
 }
 void Enemy::UpdatePath(const std::vector<std::vector<int>> &mapDistance) {
     int x = static_cast<int>(floor(Position.x / PlayScene::BlockSize));
@@ -113,9 +115,11 @@ void Enemy::Update(float deltaTime) {
     }
     Rotation = atan2(Velocity.y, Velocity.x);
     Sprite::Update(deltaTime);
+    hpLabel->Position = Position + Engine::Point(0, -10);
 }
 void Enemy::Draw() const {
     Sprite::Draw();
+    hpLabel->Draw();
     if (PlayScene::DebugMode) {
         // Draw collision radius.
         al_draw_circle(Position.x, Position.y, CollisionRadius, al_map_rgb(255, 0, 0), 2);

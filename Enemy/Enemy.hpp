@@ -6,10 +6,12 @@
 
 #include "Engine/Point.hpp"
 #include "Engine/Sprite.hpp"
+#include "UI/Component/Label.hpp"
 
 class Bullet;
 class PlayScene;
 class Turret;
+class Label;
 
 class Enemy : public Engine::Sprite {
 protected:
@@ -29,5 +31,6 @@ public:
     void UpdatePath(const std::vector<std::vector<int>> &mapDistance);
     void Update(float deltaTime) override;
     void Draw() const override;
+    Engine::Label* hpLabel;
 };
 #endif   // ENEMY_HPP
