@@ -16,7 +16,7 @@ void BlackTankEnemy::OnExplode() {
             auto enemy = new SoldierEnemy(Position.x, Position.y);
             playScene->EnemyGroup->AddNewObject(enemy);
             enemy->UpdatePath(playScene->mapDistance);
-            enemy->Update(playScene->ticks);
+            enemy->Update(i * 0.5f);
         }
     }
 }
