@@ -75,6 +75,7 @@ void PlayScene::Initialize() {
     imgTarget = new Engine::Image("play/target.png", 0, 0);
     imgTarget->Visible = false;
     preview = nullptr;
+    shovelPreview = nullptr;
     UIGroup->AddNewObject(imgTarget);
     // Preload Lose Scene
     deathBGMInstance = Engine::Resources::GetInstance().GetSampleInstance("astronomia.ogg");
@@ -187,6 +188,10 @@ void PlayScene::Update(float deltaTime) {
         // To keep responding when paused.
         preview->Update(deltaTime);
     }
+    if (shovelPreview) {
+        shovelPreview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
+        shovelPreview->Update(deltaTime);
+    }
 }
 void PlayScene::Draw() const {
     IScene::Draw();
@@ -212,6 +217,10 @@ void PlayScene::OnMouseDown(int button, int mx, int my) {
             preview = nullptr;
         }
         isShovelActive = false;
+        if (shovelPreview) {
+            UIGroup->RemoveObject(shovelPreview->GetObjectIterator());
+            shovelPreview = nullptr;
+        }
     }
     IScene::OnMouseDown(button, mx, my);
 }
@@ -250,9 +259,9 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
                         break;
                     }
                 }
-                // preview->GetObjectIterator()->first = false;
-                // UIGroup->RemoveObject(preview->GetObjectIterator());
-                // preview = nullptr;
+                shovelPreview->GetObjectIterator()->first = false;
+                UIGroup->RemoveObject(shovelPreview->GetObjectIterator());
+                shovelPreview = nullptr;
                 isShovelActive = false;
             }
         }
@@ -469,6 +478,8 @@ void PlayScene::UIBtnClicked(int id) {
         preview = new NewTurret(0, 0);
     else if (id == 3) {
         isShovelActive = true;
+        shovelPreview = new Engine::Image("play/shovel.png", 0, 0);
+        UIGroup->AddNewObject(shovelPreview);
     }
     if (preview) {
         preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();

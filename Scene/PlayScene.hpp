@@ -62,6 +62,7 @@ public:
     Engine::Image *imgTarget;
     Engine::Sprite *dangerIndicator;
     Turret *preview;
+    Engine::Image *shovelPreview;
     ShovelButton *shovelButton;
     bool isShovelActive;
     std::vector<std::vector<TileType>> mapState;
