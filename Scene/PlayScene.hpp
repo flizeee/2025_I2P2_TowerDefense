@@ -77,6 +77,7 @@ public:
     void OnMouseDown(int button, int mx, int my) override;
     void OnMouseMove(int mx, int my) override;
     void OnMouseUp(int button, int mx, int my) override;
+    void DeleteTurret(Turret* turret, const int y, const int x);
     void OnKeyDown(int keyCode) override;
     void Hit();
     int GetMoney() const;

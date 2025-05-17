@@ -181,6 +181,7 @@ void PlayScene::Update(float deltaTime) {
         // Compensate the time lost.
         enemy->Update(ticks);
     }
+    // Engine::LOG(Engine::INFO) << "Current ticks: " << ticks;
     if (preview) {
         preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
         // To keep responding when paused.
@@ -245,9 +246,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
                         turret->Position.x == x * BlockSize + BlockSize / 2 && 
                         turret->Position.y == y * BlockSize + BlockSize / 2) {
                         // Engine::LOG(Engine::INFO) << "Turret price: " << turret->GetPrice();
-                        EarnMoney(turret->GetPrice() / 2);
-                        TowerGroup->RemoveObject(turret->GetObjectIterator());
-                        mapState[y][x] = TILE_FLOOR;
+                        DeleteTurret(turret, y, x);
                         break;
                     }
                 }
@@ -288,6 +287,11 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
             OnMouseMove(mx, my);
         }
     }
+}
+void PlayScene::DeleteTurret(Turret* turret, const int y, const int x) {
+    EarnMoney(turret->GetPrice() / 2);
+    TowerGroup->RemoveObject(turret->GetObjectIterator());
+    mapState[y][x] = TILE_FLOOR;
 }
 void PlayScene::OnKeyDown(int keyCode) {
     IScene::OnKeyDown(keyCode);
@@ -339,6 +343,9 @@ void PlayScene::OnKeyDown(int keyCode) {
     } else if (keyCode == ALLEGRO_KEY_W) {
         // Hotkey for LaserTurret.
         UIBtnClicked(1);
+    } else if (keyCode == ALLEGRO_KEY_E) {
+        // Hotkey for LaserTurret.
+        UIBtnClicked(2);
     }
     else if (keyCode >= ALLEGRO_KEY_0 && keyCode <= ALLEGRO_KEY_9) {
         // Hotkey for Speed up.

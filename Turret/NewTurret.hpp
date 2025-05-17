@@ -7,5 +7,8 @@ public:
     static const int Price;
     NewTurret(float x, float y);
     void CreateBullet() override;
+    void Update(float deltaTime) override;
+    float timeElapsed = 0;
+    bool placed = 0;
 };
 #endif   // NEWTURRET_HPP 
