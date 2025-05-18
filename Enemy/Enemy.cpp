@@ -31,7 +31,7 @@ void Enemy::OnExplode() {
         getPlayScene()->GroundEffectGroup->AddNewObject(new DirtyEffect("play/dirty-" + std::to_string(distId(rng)) + ".png", dist(rng), Position.x, Position.y));
     }
 }
-Enemy::Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money) : Engine::Sprite(img, x, y), speed(speed), hp(hp), maxHp(hp), money(money), hasBeenDamaged(false) {
+Enemy::Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money) : Engine::Sprite(img, x, y), speed(speed), hp(hp), maxHp(hp), money(money), hasBeenDamaged(false), flashTimer(0) {
     CollisionRadius = radius;
     reachEndTime = 0;
     hpLabel = new Engine::Label(std::to_string((int)(hp)), "pirulen.ttf", 14, Position.x, Position.y, 255, 255, 255);
@@ -39,6 +39,7 @@ Enemy::Enemy(std::string img, float x, float y, float radius, float speed, float
 void Enemy::Hit(float damage) {
     hp -= damage;
     hasBeenDamaged = true;  // Set damaged flag when hit
+    flashTimer = 0.1f;  // Set flash duration to 0.2 seconds
     if (hp <= 0) {
         OnExplode();
         // Remove all turret's reference to target.
@@ -86,6 +87,11 @@ void Enemy::UpdatePath(const std::vector<std::vector<int>> &mapDistance) {
     path[0] = PlayScene::EndGridPoint;
 }
 void Enemy::Update(float deltaTime) {
+    // Update flash timer
+    if (flashTimer > 0) {
+        flashTimer -= deltaTime;
+    }
+    
     // Pre-calculate the velocity.
     float remainSpeed = speed * deltaTime;
     while (remainSpeed != 0) {
@@ -119,7 +125,20 @@ void Enemy::Update(float deltaTime) {
     hpLabel->Position = Position + Engine::Point(0, -10);
 }
 void Enemy::Draw() const {
-    Sprite::Draw();
+    if (flashTimer > 0) {
+        // Apply red tint when flashing
+        ALLEGRO_BITMAP* bitmap = bmp.get();
+        al_draw_tinted_scaled_rotated_bitmap_region(
+            bitmap, 0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap),
+            al_map_rgba(255, 0, 0, 180),  // Red tint with some transparency
+            Anchor.x * GetBitmapWidth(), Anchor.y * GetBitmapHeight(),
+            Position.x, Position.y, Size.x / GetBitmapWidth(), Size.y / GetBitmapHeight(),
+            Rotation, 0
+        );
+    } else {
+        Sprite::Draw();
+    }
+    
     if (hasBeenDamaged) {
         // Draw health bar background (red)
         const float barWidth = 40.0f;

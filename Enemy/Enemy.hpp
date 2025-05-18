@@ -14,20 +14,20 @@ class Turret;
 class Label;
 
 class Enemy : public Engine::Sprite {
-protected:
+public:
     std::vector<Engine::Point> path;
     float speed;
     float hp;
     float maxHp;  // Store max HP to calculate health bar percentage
     int money;
-    bool hasBeenDamaged;  // Track if enemy has been damaged
-    PlayScene *getPlayScene();
-    virtual void OnExplode();
-
-public:
     float reachEndTime;
     std::list<Turret *> lockedTurrets;
     std::list<Bullet *> lockedBullets;
+    bool hasBeenDamaged;  // Track if enemy has been damaged
+    float flashTimer;  // Timer for flash effect when hit
+    PlayScene *getPlayScene();
+    virtual void OnExplode();
+
     Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money);
     void Hit(float damage);
     void UpdatePath(const std::vector<std::vector<int>> &mapDistance);

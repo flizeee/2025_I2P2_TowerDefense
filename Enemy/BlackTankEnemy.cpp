@@ -5,7 +5,7 @@
 #include "Enemy/SoldierEnemy.hpp"
 
 BlackTankEnemy::BlackTankEnemy(int x, int y)
-    : Enemy("play/enemy-7.png", x, y, 20, 20, 200, 75) {
+    : Enemy("play/enemy-7.png", x, y, 20, 20, 100, 75) {
 } 
 
 void BlackTankEnemy::OnExplode() {

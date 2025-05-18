@@ -1,4 +1,5 @@
 #include <allegro5/base.h>
+#include <allegro5/allegro_primitives.h>
 #include <cmath>
 #include <string>
 
@@ -32,8 +33,25 @@ void NewTurret::Update(float deltaTime) {
     if (!placed) return;
     auto playScene = getPlayScene();
     timeElapsed += deltaTime;
-    // Engine::LOG(Engine::INFO) << "NewTurret timeElapsed: " << timeElapsed;
-    if (timeElapsed > 10) {
+    if (timeElapsed > LIFETIME) {
         playScene->DeleteTurret(this, Position.y / PlayScene::BlockSize, Position.x / PlayScene::BlockSize);
+    }
+}
+
+void NewTurret::Draw() const {
+    Turret::Draw();
+    if (placed) {
+        // Draw countdown bar background (red)
+        const float barWidth = 40.0f;
+        const float barHeight = 4.0f;
+        const float barY = Position.y - 40.0f;  // Position above the turret
+        const float barX = Position.x - barWidth / 2.0f;  // Center the bar
+        
+        // Draw background (red)
+        al_draw_filled_rectangle(barX, barY, barX + barWidth, barY + barHeight, al_map_rgba(255, 0, 0, 180));
+        
+        // Draw foreground (yellow) based on remaining time percentage
+        float timePercentage = 1.0f - (timeElapsed / LIFETIME);
+        al_draw_filled_rectangle(barX, barY, barX + barWidth * timePercentage, barY + barHeight, al_map_rgba(255, 255, 0, 180));
     }
 }
