@@ -25,7 +25,7 @@ public:
     std::list<Bullet *> lockedBullets;
     bool hasBeenDamaged;  // Track if enemy has been damaged
     float flashTimer;  // Timer for flash effect when hit
-    PlayScene *getPlayScene();
+    PlayScene *getPlayScene() const;
     virtual void OnExplode();
 
     Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money);

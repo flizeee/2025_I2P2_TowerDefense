@@ -17,7 +17,7 @@
 #include "UI/Animation/DirtyEffect.hpp"
 #include "UI/Animation/ExplosionEffect.hpp"
 
-PlayScene *Enemy::getPlayScene() {
+PlayScene *Enemy::getPlayScene() const {
     return dynamic_cast<PlayScene *>(Engine::GameEngine::GetInstance().GetActiveScene());
 }
 void Enemy::OnExplode() {
@@ -94,6 +94,9 @@ void Enemy::Update(float deltaTime) {
     
     // Pre-calculate the velocity.
     float remainSpeed = speed * deltaTime;
+    if (getPlayScene()->slowCheatEnabled) {
+        remainSpeed *= 0.5f;  // Slow down the enemy movement
+    }
     while (remainSpeed != 0) {
         if (path.empty()) {
             // Reach end point.
@@ -125,12 +128,30 @@ void Enemy::Update(float deltaTime) {
     hpLabel->Position = Position + Engine::Point(0, -10);
 }
 void Enemy::Draw() const {
+    PlayScene* scene = getPlayScene();
+    ALLEGRO_BITMAP* bitmap = bmp.get();
+    
     if (flashTimer > 0) {
-        // Apply red tint when flashing
-        ALLEGRO_BITMAP* bitmap = bmp.get();
+        // When hit, show red flash with a slight blue tint if slow motion is active
+        ALLEGRO_COLOR tint;
+        if (scene && scene->slowCheatEnabled) {
+            // Mix red flash with blue tint (more red, less blue)
+            tint = al_map_rgba(255, 50, 50, 180);  // Red with slight blue influence
+        } else {
+            tint = al_map_rgba(255, 0, 0, 180);  // Pure red flash
+        }
         al_draw_tinted_scaled_rotated_bitmap_region(
             bitmap, 0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap),
-            al_map_rgba(255, 0, 0, 180),  // Red tint with some transparency
+            tint,
+            Anchor.x * GetBitmapWidth(), Anchor.y * GetBitmapHeight(),
+            Position.x, Position.y, Size.x / GetBitmapWidth(), Size.y / GetBitmapHeight(),
+            Rotation, 0
+        );
+    } else if (scene && scene->slowCheatEnabled) {
+        // Normal blue tint for slow motion
+        al_draw_tinted_scaled_rotated_bitmap_region(
+            bitmap, 0, 0, al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap),
+            al_map_rgba(100, 200, 255, 200),  // Light blue tint with some transparency
             Anchor.x * GetBitmapWidth(), Anchor.y * GetBitmapHeight(),
             Position.x, Position.y, Size.x / GetBitmapWidth(), Size.y / GetBitmapHeight(),
             Rotation, 0

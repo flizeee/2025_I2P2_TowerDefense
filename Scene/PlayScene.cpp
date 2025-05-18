@@ -46,6 +46,11 @@ const std::vector<int> PlayScene::code = {
     // ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT,
     // ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEY_MODIFIERS, ALLEGRO_KEY_ENTER
 };
+const std::vector<int> PlayScene::code_slow = {
+    // ALLEGRO_KEY_UP, ALLEGRO_KEY_UP, ALLEGRO_KEY_DOWN, ALLEGRO_KEY_DOWN,
+    ALLEGRO_KEY_LEFT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_RIGHT,
+    // ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEY_MODIFIERS, ALLEGRO_KEY_ENTER
+};
 Engine::Point PlayScene::GetClientSize() {
     return Engine::Point(MapWidth * BlockSize, MapHeight * BlockSize);
 }
@@ -310,7 +315,7 @@ void PlayScene::OnKeyDown(int keyCode) {
         DebugMode = !DebugMode;
     } else {
         keyStrokes.push_back(keyCode);
-        if (keyStrokes.size() > code.size())
+        if (keyStrokes.size() > std::max(code.size(), code_slow.size()))
             keyStrokes.pop_front();
         
         // Debug print
@@ -335,13 +340,30 @@ void PlayScene::OnKeyDown(int keyCode) {
             }
             if (match) {
                 Engine::LOG(Engine::INFO) << "Cheat code activated!";
-                // Spawn a plane object
                 Plane* plane = new Plane();
                 plane->Position = Engine::Point(SpawnGridPoint.x * BlockSize, SpawnGridPoint.y * BlockSize);
                 EffectGroup->AddNewObject(plane);
-                // Give money
                 EarnMoney(10000);
-                // Clear the key sequence
+                keyStrokes.clear();
+            }
+        }
+        
+        // Check if the entered sequence matches the slow motion cheat code
+        if (keyStrokes.size() == code_slow.size()) {
+            bool match = true;
+            auto it1 = keyStrokes.begin();
+            auto it2 = code_slow.begin();
+            while (it1 != keyStrokes.end() && it2 != code_slow.end()) {
+                if (*it1 != *it2) {
+                    match = false;
+                    break;
+                }
+                ++it1;
+                ++it2;
+            }
+            if (match) {
+                Engine::LOG(Engine::INFO) << "Slow motion cheat code activated!";
+                slowCheatEnabled = !slowCheatEnabled;
                 keyStrokes.clear();
             }
         }

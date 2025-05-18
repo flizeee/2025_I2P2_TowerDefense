@@ -36,6 +36,7 @@ public:
     int lives;
     int money;
     int SpeedMult;
+    bool slowCheatEnabled = false;
 
     static bool DebugMode;
     static const std::vector<Engine::Point> directions;
@@ -45,6 +46,7 @@ public:
     static const Engine::Point SpawnGridPoint;
     static const Engine::Point EndGridPoint;
     static const std::vector<int> code;
+    static const std::vector<int> code_slow;
     int MapId;
     float ticks;
     float deathCountDown;
