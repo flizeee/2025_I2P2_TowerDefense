@@ -40,6 +40,7 @@ void Enemy::Hit(float damage) {
     hp -= damage;
     hasBeenDamaged = true;  // Set damaged flag when hit
     flashTimer = 0.1f;  // Set flash duration to 0.2 seconds
+    hpLabel->Text = std::to_string((int)(hp));
     if (hp <= 0) {
         OnExplode();
         // Remove all turret's reference to target.
@@ -51,7 +52,6 @@ void Enemy::Hit(float damage) {
         getPlayScene()->EnemyGroup->RemoveObject(objectIterator);
         AudioHelper::PlayAudio("explosion.wav");
     }
-    hpLabel->Text = std::to_string((int)(hp));
 }
 void Enemy::UpdatePath(const std::vector<std::vector<int>> &mapDistance) {
     int x = static_cast<int>(floor(Position.x / PlayScene::BlockSize));
