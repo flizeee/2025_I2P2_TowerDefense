@@ -27,7 +27,7 @@ void ScoreboardScene::Initialize() {
     AddNewObject(new Engine::Label("Rank", "pirulen.ttf", 32, halfW - 300, halfH / 2, 255, 255, 255, 255, 0.5, 0.5));
     AddNewObject(new Engine::Label("Name", "pirulen.ttf", 32, halfW - 100, halfH / 2, 255, 255, 255, 255, 0.5, 0.5));
     AddNewObject(new Engine::Label("Score", "pirulen.ttf", 32, halfW + 100, halfH / 2, 255, 255, 255, 255, 0.5, 0.5));
-    AddNewObject(new Engine::Label("Date", "pirulen.ttf", 32, halfW + 300, halfH / 2, 255, 255, 255, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Date", "pirulen.ttf", 32, halfW + 400, halfH / 2, 255, 255, 255, 255, 0.5, 0.5));
 
     // Create score labels
     scoreLabels = new Engine::Label*[entriesPerPage * 4];
@@ -36,7 +36,7 @@ void ScoreboardScene::Initialize() {
         Engine::Label* rankLabel = new Engine::Label("", "pirulen.ttf", 24, halfW - 300, y, 255, 255, 255, 255, 0.5, 0.5);
         Engine::Label* nameLabel = new Engine::Label("", "pirulen.ttf", 24, halfW - 100, y, 255, 255, 255, 255, 0.5, 0.5);
         Engine::Label* scoreLabel = new Engine::Label("", "pirulen.ttf", 24, halfW + 100, y, 255, 255, 255, 255, 0.5, 0.5);
-        Engine::Label* dateLabel = new Engine::Label("", "pirulen.ttf", 24, halfW + 300, y, 255, 255, 255, 255, 0.5, 0.5);
+        Engine::Label* dateLabel = new Engine::Label("", "pirulen.ttf", 24, halfW + 400, y, 255, 255, 255, 255, 0.5, 0.5);
         
         scoreLabels[i * 4] = rankLabel;
         scoreLabels[i * 4 + 1] = nameLabel;
