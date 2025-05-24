@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Enemy/BlackTankEnemy.hpp"
+#include "Enemy/CreeperEnemy.hpp"
 #include "Enemy/Enemy.hpp"
 #include "Enemy/PlaneEnemy.hpp"
 #include "Enemy/SoldierEnemy.hpp"
@@ -179,6 +180,9 @@ void PlayScene::Update(float deltaTime) {
                 break;
             case 4:
                 EnemyGroup->AddNewObject(enemy = new BlackTankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+                break;
+            case 5:
+                EnemyGroup->AddNewObject(enemy = new CreeperEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
                 break;
             default:
                 continue;

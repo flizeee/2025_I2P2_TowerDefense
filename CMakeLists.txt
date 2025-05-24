@@ -31,6 +31,8 @@ add_executable(2025_I2P2_TowerDefense
     Enemy/TankEnemy.hpp
     Enemy/BlackTankEnemy.cpp
     Enemy/BlackTankEnemy.hpp
+    Enemy/CreeperEnemy.cpp
+    Enemy/CreeperEnemy.hpp
 
     Engine/Allegro5Exception.cpp
     Engine/Allegro5Exception.hpp
